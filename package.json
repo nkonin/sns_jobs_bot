@@ -1,0 +1,15 @@
+{
+  "name": "sns_jobs_bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "mongoose": "^5.2.17"
+  },
+  "scripts": {
+    "start:dev": "babel-node $NODE_DEBUG_OPTION src/index.js"
+  }
+}

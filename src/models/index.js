@@ -1,11 +1,16 @@
-import ActionLogs from "./ActionLogs";
-import MessageLogs from "./MessageLogs";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import ActionLog from './logs/actionLog';
+import MessageLog from './logs/messageLog';
+import Vote from './vote'
 
-const url = process.env.MONGO_URL || "mongodb://localhost:27017/sns_jobs_bot";
+const url = process.env.MONGO_URL || 'mongodb://localhost:27017/sns_jobs_bot';
 
-mongoose.connect(url, { useNewUrlParser: true })
-  .then(() => console.log("CONNECTED TO DB"))
-  .catch(err => console.error(err));
+mongoose
+    .connect(
+        url,
+        { useNewUrlParser: true },
+    )
+    .then(() => console.log('CONNECTED TO DB'))
+    .catch(err => console.error(err));
 
-export { ActionLogs, MessageLogs };
+export { ActionLog, MessageLog, Vote };

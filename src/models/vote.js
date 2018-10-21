@@ -3,19 +3,27 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const voteSchema = new Schema({
     sourceMessage: String,
+    options: [String],
     votes: {
         type: Map,
         of: String,
-        default: {}
+        default: {},
     },
     created_at: { type: Date, default: Date.now },
 });
 
 voteSchema.methods.scores = function() {
-    const acc = {};
+    const acc = {
+        ...this.options.reduce((acc, v) => {
+            acc[v] = 0;
+            return acc;
+        }, {}),
+    };
 
     for (const v of this.votes.values()) {
-        acc[v] = (acc[v] || 0) + 1;
+        if (this.options.includes(v)) {
+            acc[v] += 1
+        }
     }
 
     return acc;

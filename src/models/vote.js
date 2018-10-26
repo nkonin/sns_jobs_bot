@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 const voteSchema = new Schema({
-    sourceMessage: String,
+    sourceMessage: Number,
     options: [String],
     votes: {
         type: Map,

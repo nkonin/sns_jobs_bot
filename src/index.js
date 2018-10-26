@@ -6,7 +6,7 @@ import { Vote, Message } from './models';
 
 const channelRepostId = process.env.FORWARD_CHANNEL_ID
 
-const voteButtons = ['👍', '👎'];
+const voteButtons = ['👍', '👎', '😱'];
 
 const voteKeyboard = scores => Markup.inlineKeyboard(
     Object.keys(scores).map(key => {
@@ -42,10 +42,10 @@ bot.catch(err => {
 
 bot.command('repost', async ctx => {
     const message = new Message({
-        reactionOptions: voteButtons
+        reactionOptions: ['👍', '🙊', '😱']
     });
 
-    const res = await ctx.reply('ast', {
+    const res = await ctx.telegram.sendMessage(channelRepostId, 'ast', {
         ...reactionsKeyboard(message.scores())
     })
 
@@ -54,12 +54,15 @@ bot.command('repost', async ctx => {
 });
 
 bot.hashtag('vac', async ctx => {
+    console.log(ctx.update)
     const vote = new Vote({
         sourceMessage: ctx.update.message.message_id,
         options: voteButtons
     });
 
-    ctx.reply('Vote', {
+    vote.save()
+
+    const res = await ctx.reply('Vote', {
         ...Extra.inReplyTo(ctx.update.message.message_id),
         ...voteKeyboard(vote.scores()),
     });
@@ -79,25 +82,41 @@ const router = new Router(({ callbackQuery }) => {
 router.on('click_vote', async ctx => {
     const sourceMessage = ctx.update.callback_query.message.reply_to_message.message_id;
     const vote = await Vote.findOne({ sourceMessage });
-    const user = ctx.update.callback_query.from.id;
+    const userId = String(ctx.update.callback_query.from.id);
+    
+    if (vote.votes.get(userId) == ctx.state.value) {
+        await vote.removeVote(userId);
 
-    vote.addVote({ key: String(user), value: ctx.state.value });
+        await vote.save()
+        await ctx.editMessageText('vote', voteKeyboard(vote.scores()))
+        await ctx.answerCbQuery(ctx.state.value);
+    } else {
+        await vote.addVote({ key: userId, value: ctx.state.value });
 
-    await vote.save()
-    await ctx.editMessageText('vote', voteKeyboard(vote.scores()))
-    await ctx.answerCbQuery(ctx.state.value);
+        await vote.save()
+        await ctx.editMessageText('vote', voteKeyboard(vote.scores()))
+        await ctx.answerCbQuery(ctx.state.value);
+    }
 });
 
 router.on('click_reaction', async ctx => {
     const sourceMessage = ctx.update.callback_query.message.message_id;
     const message = await Message.findOne({ sourceMessage });
-    const user = ctx.update.callback_query.from.id;
+    const userId = String(ctx.update.callback_query.from.id);
 
-    message.addReaction({ userId: String(user), reaction: ctx.state.value });
+    if (!message.reactions.get(ctx.state.value).includes(userId)) {
+        await message.addReaction({ userId: userId, reaction: ctx.state.value });
 
-    await message.save()
-    await ctx.editMessageText('vote', reactionsKeyboard(message.scores()))
-    await ctx.answerCbQuery(ctx.state.value);
+        await message.save()
+        await ctx.editMessageText('vote', reactionsKeyboard(message.scores()))
+        await ctx.answerCbQuery(ctx.state.value);
+    } else {
+        await message.removeReaction({ userId: userId, reaction: ctx.state.value });
+
+        await message.save()
+        await ctx.editMessageText('vote', reactionsKeyboard(message.scores()))
+        await ctx.answerCbQuery(ctx.state.value);
+    }
 });
 
 bot.on('callback_query', router)

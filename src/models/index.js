@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import ActionLog from './logs/actionLog';
+import ErrorLog from './logs/errorLog';
 import MessageLog from './logs/messageLog';
 import Vote from './vote'
 import Message from './message'
@@ -14,4 +15,4 @@ mongoose
     .then(() => console.log('CONNECTED TO DB'))
     .catch(err => console.error(err));
 
-export { ActionLog, MessageLog, Vote, Message };
+export { ActionLog, MessageLog, ErrorLog, Vote, Message };

@@ -4,12 +4,10 @@ const Schema = mongoose.Schema;
 const actionLogSchema = new Schema({
     type: {
         type: String,
-        enum: ['ACCEPT', 'REJECT'],
         required: true,
     },
-    message: {
-        type: Schema.Types.ObjectId,
-        ref: 'MessageLog',
+    extra: {
+        type: Schema.Types.Mixed,
         required: true,
     },
     created_at: {

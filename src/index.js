@@ -2,7 +2,7 @@ import Telegraf from 'telegraf';
 import Markup from 'telegraf/markup';
 import Extra from 'telegraf/extra';
 import Router from 'telegraf/router';
-import { Vote, Message, ErrorLog } from './models';
+import { Vote, Message, ErrorLog, MessageLog, ActionLog } from './models';
 
 const channelRepostId = process.env.FORWARD_CHANNEL_ID;
 
@@ -50,7 +50,17 @@ bot.catch(async err => {
     }
 });
 
-bot.command('repost', async ctx => {
+bot.on('message', async (ctx, next)=>{
+    const messageLog = new MessageLog({
+        payload: ctx.update
+    });
+
+    await messageLog.save()
+    next()
+})
+
+bot.command('accept', async ctx => {
+    // TODO: Use reply message as target
     const message = new Message({
         reactionOptions: ['👍', '🙊', '😱'],
     });

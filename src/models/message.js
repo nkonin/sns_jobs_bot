@@ -32,7 +32,7 @@ messageSchema.methods.addReaction = function({ userId, reaction }) {
 };
 
 messageSchema.methods.removeReaction = function({ userId, reaction }) {
-    this.reactions.set(reaction, this.reactions.get(reaction).filter(el => el != userId));
+    this.reactions.set(reaction, this.reactions.get(reaction).filter(el => el !== userId));
     return this.scores();
 };
 

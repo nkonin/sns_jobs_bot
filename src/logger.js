@@ -1,6 +1,6 @@
 import { MessageLog, ActionLog, ErrorLog } from './models';
 
-const error = ({ type, extra }) => ErrorLog.create({ type, extra });
+const error = ({ type, error, extra }) => ErrorLog.create({ type, error, extra });
 
 const action = ({ type, extra }) => ActionLog.create({ type, extra });
 

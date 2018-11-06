@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import ActionLog from './logs/actionLog';
-import ErrorLog from './logs/errorLog';
-import MessageLog from './logs/messageLog';
-import Vote from './vote'
-import Message from './message'
+import ActionLog from './actionLog';
+import ErrorLog from './errorLog';
+import MessageLog from './messageLog';
+import Vote from './vote';
+import Message from './message';
 
 const url = process.env.MONGO_URL || 'mongodb://localhost:27017/sns_jobs_bot';
 
@@ -12,7 +12,6 @@ mongoose
         url,
         { useNewUrlParser: true },
     )
-    .then(() => console.log('CONNECTED TO DB'))
     .catch(err => console.error(err));
 
 export { ActionLog, MessageLog, ErrorLog, Vote, Message };

@@ -1,16 +1,19 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const voteSchema = new Schema({
-    sourceMessage: Number,
-    options: [String],
-    votes: {
-        type: Map,
-        of: String,
-        default: {},
+const voteSchema = new Schema(
+    {
+        sourceMessage: Number,
+        options: [String],
+        votes: {
+            type: Map,
+            of: String,
+            default: {},
+        },
+        created_at: { type: Date, default: Date.now },
     },
-    created_at: { type: Date, default: Date.now },
-});
+    { versionKey: false },
+);
 
 voteSchema.methods.scores = function() {
     const acc = {
@@ -22,7 +25,7 @@ voteSchema.methods.scores = function() {
 
     for (const v of this.votes.values()) {
         if (this.options.includes(v)) {
-            acc[v] += 1
+            acc[v] += 1;
         }
     }
 

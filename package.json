@@ -11,6 +11,6 @@
     "telegraf": "^3.24.1"
   },
   "scripts": {
-    "start:dev": "babel-node $NODE_DEBUG_OPTION ./src/index.js"
+    "start:dev": "babel-node $NODE_DEBUG_OPTION ./src/bot.js"
   }
 }

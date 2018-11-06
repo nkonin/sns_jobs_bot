@@ -1,21 +1,24 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const messageSchema = new Schema({
-    sourceMessage: Number,
-    reactionOptions: [String],
-    reactions: {
-        type: Map,
-        of: [String],
-        default: function() {
-            return this.reactionOptions.reduce((acc, v) => {
-                acc[v] = [];
-                return acc;
-            }, {});
+const messageSchema = new Schema(
+    {
+        sourceMessage: Number,
+        reactionOptions: [String],
+        reactions: {
+            type: Map,
+            of: [String],
+            default: function() {
+                return this.reactionOptions.reduce((acc, v) => {
+                    acc[v] = [];
+                    return acc;
+                }, {});
+            },
         },
+        created_at: { type: Date, default: Date.now },
     },
-    created_at: { type: Date, default: Date.now },
-});
+    { versionKey: false },
+);
 
 messageSchema.methods.scores = function() {
     return this.reactionOptions.reduce((acc, v) => {

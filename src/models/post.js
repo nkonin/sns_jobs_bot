@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const messageSchema = new Schema(
+const postSchema = new Schema(
     {
-        sourceMessage: Number,
+        messageId: Number,
         reactionOptions: [String],
         reactions: {
             type: Map,
@@ -20,23 +20,23 @@ const messageSchema = new Schema(
     { versionKey: false },
 );
 
-messageSchema.methods.scores = function() {
+postSchema.methods.scores = function() {
     return this.reactionOptions.reduce((acc, v) => {
         acc[v] = this.reactions.get(v).length;
         return acc;
     }, {});
 };
 
-messageSchema.methods.addReaction = function({ userId, reaction }) {
+postSchema.methods.addReaction = function({ userId, reaction }) {
     if (!this.reactions.get(reaction).includes(userId)) {
         this.reactions.get(reaction).push(userId);
     }
     return this.scores();
 };
 
-messageSchema.methods.removeReaction = function({ userId, reaction }) {
+postSchema.methods.removeReaction = function({ userId, reaction }) {
     this.reactions.set(reaction, this.reactions.get(reaction).filter(el => el !== userId));
     return this.scores();
 };
 
-export default mongoose.model('Messages', messageSchema);
+export default mongoose.model('Post', postSchema);

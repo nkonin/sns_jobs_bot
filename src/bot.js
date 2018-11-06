@@ -1,8 +1,16 @@
 import Telegraf from 'telegraf';
-import { onlyAdmin, errorLogger, actionLogger, messageLogger, chatFilter } from './middlewares';
-import { reactionOptions, channelRepostId, allowedChatId, voteOptions, botToken } from './config';
-import { accept, createVote, clickVote, clickReaction } from './actions';
 import router from './router';
+import { onlyAdmin, errorLogger, actionLogger, messageLogger, chatFilter } from './middlewares';
+import { createPost, createVote, clickVote, clickReaction } from './actions';
+import {
+    allowedChatId,
+    botToken,
+    vacancyHashtag,
+    acceptCommand,
+    repostChannelId,
+    voteOptions,
+    reactionOptions,
+} from './config';
 
 const bot = new Telegraf(botToken);
 
@@ -15,7 +23,7 @@ bot.on('message', messageLogger);
 bot.filter(chatFilter(allowedChatId));
 
 bot.command(
-    'accept',
+    acceptCommand,
     errorLogger({ type: 'ACCEPT' }),
     actionLogger({
         type: 'ACCEPT',
@@ -24,11 +32,11 @@ bot.command(
         }),
     }),
     onlyAdmin,
-    accept,
+    createPost({ repostChannelId, reactionOptions }),
 );
 
 bot.hashtag(
-    'vac',
+    vacancyHashtag,
     errorLogger({ type: 'CREATE_VOTE' }),
     actionLogger({
         type: 'CREATE_VOTE',
@@ -36,7 +44,7 @@ bot.hashtag(
             messageId: ctx.update.message.message_id,
         }),
     }),
-    createVote,
+    createVote({ voteOptions }),
 );
 
 router.on(
@@ -46,7 +54,7 @@ router.on(
         type: 'CLICK_VOTE',
         extraSelector: ctx => ctx.update.callback_query,
     }),
-    clickVote,
+    clickVote(),
 );
 
 router.on(
@@ -56,7 +64,7 @@ router.on(
         type: 'CLICK_REACTION',
         extraSelector: ctx => ctx.update.callback_query,
     }),
-    clickReaction,
+    clickReaction(),
 );
 
 bot.on('callback_query', router);

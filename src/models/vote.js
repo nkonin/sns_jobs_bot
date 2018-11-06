@@ -42,4 +42,4 @@ voteSchema.methods.removeVote = function(key) {
     return this.scores();
 };
 
-export default mongoose.model('Votes', voteSchema);
+export default mongoose.model('Vote', voteSchema);

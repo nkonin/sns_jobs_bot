@@ -1,9 +1,8 @@
 import { Vote } from '../models';
-import { voteOptions } from '../config';
 import { scoresKeyboard } from '../utils';
 import Extra from 'telegraf/extra';
 
-export default async ctx => {
+export default ({voteOptions}) => async ctx => {
     const vote = new Vote({
         sourceMessage: ctx.update.message.message_id,
         options: voteOptions,

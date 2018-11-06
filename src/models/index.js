@@ -4,12 +4,11 @@ import ErrorLog from './errorLog';
 import MessageLog from './messageLog';
 import Vote from './vote';
 import Post from './post';
-
-const url = process.env.MONGO_URL || 'mongodb://localhost:27017/sns_jobs_bot';
+import {mongoUrl} from '../config'
 
 mongoose
     .connect(
-        url,
+        mongoUrl,
         { useNewUrlParser: true },
     )
     .catch(err => console.error(err));

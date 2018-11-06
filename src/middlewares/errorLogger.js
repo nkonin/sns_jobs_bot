@@ -1,4 +1,4 @@
-import {ErrorLog} from '../models';
+import { ErrorLog } from '../models';
 
 export default ({ type }) => async (ctx, next) => {
     try {

@@ -7,13 +7,8 @@ const postSchema = new Schema(
         reactionOptions: [String],
         reactions: {
             type: Map,
-            of: [String],
-            default: function() {
-                return this.reactionOptions.reduce((acc, v) => {
-                    acc[v] = [];
-                    return acc;
-                }, {});
-            },
+            of: String,
+            default: {},
         },
         created_at: { type: Date, default: Date.now },
     },
@@ -21,22 +16,31 @@ const postSchema = new Schema(
 );
 
 postSchema.methods.scores = function() {
-    return this.reactionOptions.reduce((acc, v) => {
-        acc[v] = this.reactions.get(v).length;
-        return acc;
-    }, {});
-};
+    const acc = {
+        ...this.reactionOptions.reduce((acc, v) => {
+            acc[v] = 0;
+            return acc;
+        }, {}),
+    };
 
-postSchema.methods.addReaction = function({ userId, reaction }) {
-    if (!this.reactions.get(reaction).includes(userId)) {
-        this.reactions.get(reaction).push(userId);
+    for (const v of this.reactions.values()) {
+        if (this.reactionOptions.includes(v)) {
+            acc[v] += 1;
+        }
     }
+
+    return acc;
+};
+
+postSchema.methods.addReaction = function({ key, reaction }) {
+    this.reactions.set(key, reaction);
     return this.scores();
 };
 
-postSchema.methods.removeReaction = function({ userId, reaction }) {
-    this.reactions.set(reaction, this.reactions.get(reaction).filter(el => el !== userId));
+postSchema.methods.removeReaction = function(key) {
+    this.reactions.delete(key);
     return this.scores();
 };
+
 
 export default mongoose.model('Post', postSchema);

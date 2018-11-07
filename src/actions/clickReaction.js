@@ -6,11 +6,12 @@ export default () => async ctx => {
     const post = await Post.findOne({ messageId });
     const userId = String(ctx.update.callback_query.from.id);
 
-    if (post.reactions.get(ctx.state.value).includes(userId)) {
-        post.removeReaction({ userId: userId, reaction: ctx.state.value });
+    if (post.reactions.get(userId) === ctx.state.value) {
+        post.removeReaction(userId);
     } else {
-        post.addReaction({ userId: userId, reaction: ctx.state.value });
+        post.addReaction({ key: userId, reaction: ctx.state.value });
     }
+
 
     await post.save();
 

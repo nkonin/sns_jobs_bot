@@ -1,6 +1,6 @@
+import Extra from 'telegraf/extra';
 import { Vote } from '../models';
 import { scoresKeyboard } from '../utils';
-import Extra from 'telegraf/extra';
 
 export default ({voteOptions}) => async ctx => {
     const vote = new Vote({
@@ -10,7 +10,7 @@ export default ({voteOptions}) => async ctx => {
 
     vote.save();
 
-    await ctx.reply('Vote', {
+    await ctx.reply('Оцените вакансию', {
         ...Extra.inReplyTo(ctx.update.message.message_id),
         ...scoresKeyboard({ scores: vote.scores(), action: 'CLICK_VOTE' }).extra(),
     });
